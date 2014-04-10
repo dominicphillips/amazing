@@ -86,12 +86,17 @@ func (a *Amazing) ItemLookup(params url.Values) (*AmazonLookupResult, error) {
 	h := hmac.New(func() hash.Hash {
 		return sha256.New()
 	}, []byte(a.Config.AWSSecretKey))
+
 	h.Write([]byte(signThis))
 	signed := base64.StdEncoding.EncodeToString(h.Sum(nil))
-	params.Set("Signature", signed)
-	u, _ := url.ParseRequestURI(a.Config.ServiceDomain[0])
+	merged.Set("Signature", signed)
+
+	u, err := url.ParseRequestURI(a.Config.ServiceDomain[0])
+	if err != nil {
+		return nil, err
+	}
 	u.Path = "/onca/xml"
-	u.RawQuery = params.Encode()
+	u.RawQuery = merged.Encode()
 	urlStr := fmt.Sprintf("%v", u)
 
 	r, err := http.NewRequest("GET", urlStr, nil)
