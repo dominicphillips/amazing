@@ -9,8 +9,73 @@ const (
 	errorFormat = "ErrorCode: %s\nMessage: %s\nRequest:%s"
 )
 
-type AmazonLookupResult struct {
-	XMLName xml.Name `xml:"ItemLookupResponse"`
+type AmazonItemLookupResponse struct {
+	XMLName          xml.Name `xml:"ItemLookupResponse"`
+	OperationRequest AmazonOperationRequest
+	AmazonItems      AmazonItems `xml:"Items"`
+}
+
+type AmazonOperationRequest struct {
+	HTTPHeaders           []AmazonOperationRequestHeader   `xml:"HTTPHeaders>Header"`
+	Arguments             []AmazonOperationRequestArgument `xml:"Arguments>Argument"`
+	RequestId             string
+	RequestProcessingTime float64
+}
+
+type AmazonOperationRequestHeader struct {
+	Name  string `xml:"Name,attr"`
+	Value string `xml:"Value,attr"`
+}
+
+type AmazonOperationRequestArgument struct {
+	Name  string `xml:"Name,attr"`
+	Value string `xml:"Value,attr"`
+}
+
+type AmazonItems struct {
+	Request AmazonRequest
+	Items   []AmazonItem `xml:"Item"`
+}
+
+type AmazonItem struct {
+	ASIN          string
+	ParentASIN    string
+	DetailPageURL string
+	SalesRank     string
+	ItemLinks     []AmazonItemLink `xml:"ItemLinks>ItemLink"`
+	SmallImage    AmazonImage
+	MediumImage   AmazonImage
+	LargeImage    AmazonImage
+	ImageSets     []AmazonImageSet `xml:"ImageSets>ImageSet"`
+}
+
+type AmazonItemLink struct {
+	Description string
+	URL         string
+}
+
+type AmazonImageSet struct {
+	Category       string `xml:"Category,attr"`
+	SwatchImage    AmazonImage
+	SmallImage     AmazonImage
+	ThumbnailImage AmazonImage
+	TinyImage      AmazonImage
+	MediumImage    AmazonImage
+	LargeImage     AmazonImage
+}
+
+type AmazonRequest struct {
+	IsValid           bool
+	ItemLookupRequest AmazonItemLookupRequest
+	Errors            []AmazonError
+}
+
+type AmazonItemLookupRequest struct {
+	Condition      string
+	IdType         string
+	ItemId         string
+	ResponseGroups []string `xml:"ResponseGroup"`
+	VariationPage  string
 }
 
 type AmazonItemLookupErrorResponse struct {
@@ -25,10 +90,9 @@ type AmazonError struct {
 }
 
 type AmazonImage struct {
-	XMLName xml.Name `xml:"MediumImage"`
-	URL     string
-	Height  uint16
-	Width   uint16
+	URL    string
+	Height uint16
+	Width  uint16
 }
 
 func (a *AmazonError) Error() string {

@@ -97,10 +97,10 @@ func (a *Amazing) MergeParamsWithDefaults(extra url.Values) url.Values {
 
 }
 
-func (a *Amazing) ItemLookup(params url.Values) (*AmazonLookupResult, error) {
+func (a *Amazing) ItemLookup(params url.Values) (*AmazonItemLookupResponse, error) {
 
 	var err error
-	var result AmazonLookupResult
+	var result AmazonItemLookupResponse
 
 	httpClient := NewTimeoutClient(time.Duration(3*time.Second), time.Duration(3*time.Second))
 
@@ -150,6 +150,7 @@ func (a *Amazing) ItemLookup(params url.Values) (*AmazonLookupResult, error) {
 	}
 
 	err = xml.Unmarshal(b, &result)
+	//ioutil.WriteFile("test", b, 0777)
 
 	return &result, err
 }

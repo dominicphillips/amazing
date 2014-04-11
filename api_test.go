@@ -9,7 +9,7 @@ import (
 )
 
 func CheckEnv(t *testing.T) {
-	// skip this if env variables are not set
+
 	tag := os.Getenv(envTag)
 	access := os.Getenv(envAccess)
 	secret := os.Getenv(envSecret)
@@ -44,6 +44,7 @@ func TestNew(t *testing.T) {
 func TestItemLookup(t *testing.T) {
 	CheckEnv(t)
 	client, _ := NewAmazingFromEnv("DE")
+	// check error handling
 	params := url.Values{
 		"Condition":     []string{"New"},
 		"ResponseGroup": []string{"Images,Medium,Offers"},
@@ -54,10 +55,24 @@ func TestItemLookup(t *testing.T) {
 
 	result, err := client.ItemLookup(params)
 
-	if err != nil {
-		fmt.Println(err)
+	if result == nil || err != nil {
+		t.Errorf("Result is nil or error", err)
+		t.Skip()
 	}
 
-	fmt.Println(result.XMLName)
+	// verify there is an Error in the Result
+	if len(result.AmazonItems.Request.Errors) == 0 {
+		t.Errorf("Error list is empty, should be 1")
+	}
+
+	fmt.Println("ok")
+	// get PlayStation 4
+	params.Set("ItemId", "B00BIYAO3K")
+	result, err = client.ItemLookup(params)
+
+	if result == nil || err != nil {
+		t.Errorf("Result is nil or error", err)
+		t.Skip()
+	}
 
 }
