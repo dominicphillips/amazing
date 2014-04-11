@@ -11,10 +11,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 )
 
-var SERVICE_DOMAINS = map[string][]string{
+var serviceDomains = map[string][]string{
 	"CA": []string{"ecs.amazonaws.ca", "xml-ca.amznxslt.com"},
 	"CN": []string{"webservices.amazon.cn", "xml-cn.amznxslt.com"},
 	"DE": []string{"ecs.amazonaws.de", "xml-de.amznxslt.com"},
@@ -25,6 +26,15 @@ var SERVICE_DOMAINS = map[string][]string{
 	"UK": []string{"ecs.amazonaws.co.uk", "xml-uk.amznxslt.com"},
 	"US": []string{"ecs.amazonaws.com", "xml-us.amznxslt.com"},
 }
+
+const (
+	resourcePath    = "/onca/xml"
+	resourceService = "AWSECommerceService"
+	resourceVersion = "2011-08-01"
+	envTag          = "AMAZING_ASSOCIATE_TAG"
+	envAccess       = "AMAZING_ACCESS_KEY"
+	envSecret       = "AMAZING_SECRET_KEY"
+)
 
 type Amazing struct {
 	Config *AmazingClientConfig
@@ -37,15 +47,28 @@ type AmazingClientConfig struct {
 	AWSSecretKey   string
 }
 
-type AmazonLookupResult struct {
-	XMLName xml.Name `xml:"ItemLookupResponse"`
-	//	Item    Product  `xml:"Items>Item"`
-	//	OperationRequest
+func NewAmazing(domain, tag, access, secret string) (*Amazing, error) {
+	return newAmazing(domain, tag, access, secret)
 }
 
-func NewAmazing(domain, tag, access, secret string) (*Amazing, error) {
+func NewAmazingFromEnv(domain string) (*Amazing, error) {
+	tag := os.Getenv(envTag)
+	access := os.Getenv(envAccess)
+	secret := os.Getenv(envSecret)
 
-	if d, ok := SERVICE_DOMAINS[domain]; ok {
+	if tag == "" || access == "" || secret == "" {
+		return nil, fmt.Errorf("Can't read configuration from environment variables, are they set? "+
+			"%s: %s\n"+
+			"%s: %s\n"+
+			"%s: %s\n", envTag, tag, envAccess, access, envSecret, secret)
+	}
+
+	return newAmazing(domain, tag, access, secret)
+
+}
+
+func newAmazing(domain, tag, access, secret string) (*Amazing, error) {
+	if d, ok := serviceDomains[domain]; ok {
 		config := &AmazingClientConfig{
 			ServiceDomain:  d,
 			AssociateTag:   tag,
@@ -54,7 +77,7 @@ func NewAmazing(domain, tag, access, secret string) (*Amazing, error) {
 		}
 		return &Amazing{config}, nil
 	} else {
-		return nil, errors.New(fmt.Sprintf("Service domain does not exist %v", SERVICE_DOMAINS))
+		return nil, errors.New(fmt.Sprintf("Service domain does not exist %v", serviceDomains))
 	}
 }
 
@@ -62,9 +85,9 @@ func (a *Amazing) MergeParamsWithDefaults(extra url.Values) url.Values {
 	params := url.Values{
 		"AWSAccessKeyId": []string{a.Config.AWSAccessKeyId},
 		"AssociateTag":   []string{a.Config.AssociateTag},
-		"Service":        []string{"AWSECommerceService"},
+		"Service":        []string{resourceService},
 		"Timestamp":      []string{time.Now().Format(time.RFC3339Nano)},
-		"Version":        []string{"2011-08-01"},
+		"Version":        []string{resourceVersion},
 	}
 	for k, v := range extra {
 		params[k] = v
@@ -82,31 +105,42 @@ func (a *Amazing) ItemLookup(params url.Values) (*AmazonLookupResult, error) {
 	httpClient := NewTimeoutClient(time.Duration(3*time.Second), time.Duration(3*time.Second))
 
 	merged := a.MergeParamsWithDefaults(params)
-	signThis := fmt.Sprintf("GET\n%s\n/onca/xml\n%s", a.Config.ServiceDomain[0], merged.Encode())
+	signThis := fmt.Sprintf("GET\n%s\n%s\n%s", a.Config.ServiceDomain[0], resourcePath, merged.Encode())
 	h := hmac.New(func() hash.Hash {
 		return sha256.New()
 	}, []byte(a.Config.AWSSecretKey))
-
 	h.Write([]byte(signThis))
 	signed := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	merged.Set("Signature", signed)
 
-	u, err := url.ParseRequestURI(a.Config.ServiceDomain[0])
-	if err != nil {
-		return nil, err
+	u := url.URL{
+		Scheme:   "http",
+		Host:     a.Config.ServiceDomain[0],
+		Path:     resourcePath,
+		RawQuery: merged.Encode(),
 	}
-	u.Path = "/onca/xml"
-	u.RawQuery = merged.Encode()
-	urlStr := fmt.Sprintf("%v", u)
 
-	r, err := http.NewRequest("GET", urlStr, nil)
+	r, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	res, err := httpClient.Do(r)
-	if err != nil || res.StatusCode != http.StatusOK {
+	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		b, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return nil, err
+		}
+		var errorResponse AmazonItemLookupErrorResponse
+		err = xml.Unmarshal(b, &errorResponse)
+		if err != nil {
+			return nil, err
+		}
+		return nil, &errorResponse
 	}
 
 	b, err := ioutil.ReadAll(res.Body)
