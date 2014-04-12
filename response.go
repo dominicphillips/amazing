@@ -15,6 +15,12 @@ type AmazonItemLookupResponse struct {
 	AmazonItems      AmazonItems `xml:"Items"`
 }
 
+type AmazonItemSearchResponse struct {
+	XMLName          xml.Name `xml:"ItemSearchResponse"`
+	OperationRequest AmazonOperationRequest
+	AmazonItems      AmazonItems `xml:"Items"`
+}
+
 type AmazonOperationRequest struct {
 	HTTPHeaders           []AmazonOperationRequestHeader   `xml:"HTTPHeaders>Header"`
 	Arguments             []AmazonOperationRequestArgument `xml:"Arguments>Argument"`

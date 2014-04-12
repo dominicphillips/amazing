@@ -65,7 +65,8 @@ func TestItemLookup(t *testing.T) {
 		t.Errorf("Error list is empty, should be 1")
 	}
 
-	fmt.Println("ok")
+	fmt.Println(result.XMLName)
+
 	// get PlayStation 4
 	params.Set("ItemId", "B00BIYAO3K")
 	result, err = client.ItemLookup(params)

@@ -93,25 +93,38 @@ func (a *Amazing) MergeParamsWithDefaults(extra url.Values) url.Values {
 		params[k] = v
 	}
 
+	// attach signature
+	signThis := fmt.Sprintf("GET\n%s\n%s\n%s", a.Config.ServiceDomain[0], resourcePath, params.Encode())
+	h := hmac.New(func() hash.Hash {
+		return sha256.New()
+	}, []byte(a.Config.AWSSecretKey))
+	h.Write([]byte(signThis))
+	signed := base64.StdEncoding.EncodeToString(h.Sum(nil))
+	params.Set("Signature", signed)
+
 	return params
 
 }
 
 func (a *Amazing) ItemLookup(params url.Values) (*AmazonItemLookupResponse, error) {
 
-	var err error
 	var result AmazonItemLookupResponse
+	err := a.Request(params, &result)
+	return &result, err
 
+}
+
+func (a *Amazing) ItemSearch(params url.Values) (*AmazonItemSearchResponse, error) {
+
+	var result AmazonItemSearchResponse
+	err := a.Request(params, &result)
+	return &result, err
+
+}
+
+func (a *Amazing) Request(params url.Values, result interface{}) error {
 	httpClient := NewTimeoutClient(time.Duration(3*time.Second), time.Duration(3*time.Second))
-
 	merged := a.MergeParamsWithDefaults(params)
-	signThis := fmt.Sprintf("GET\n%s\n%s\n%s", a.Config.ServiceDomain[0], resourcePath, merged.Encode())
-	h := hmac.New(func() hash.Hash {
-		return sha256.New()
-	}, []byte(a.Config.AWSSecretKey))
-	h.Write([]byte(signThis))
-	signed := base64.StdEncoding.EncodeToString(h.Sum(nil))
-	merged.Set("Signature", signed)
 
 	u := url.URL{
 		Scheme:   "http",
@@ -122,35 +135,35 @@ func (a *Amazing) ItemLookup(params url.Values) (*AmazonItemLookupResponse, erro
 
 	r, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	res, err := httpClient.Do(r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if res.StatusCode != http.StatusOK {
 		b, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		var errorResponse AmazonItemLookupErrorResponse
 		err = xml.Unmarshal(b, &errorResponse)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return nil, &errorResponse
+		return &errorResponse
 	}
 
 	b, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = xml.Unmarshal(b, &result)
+	err = xml.Unmarshal(b, result)
 	//ioutil.WriteFile("test", b, 0777)
 
-	return &result, err
+	return err
 }
