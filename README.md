@@ -1,7 +1,7 @@
-### Go Client for the Amazon Product API
+## Go Client for the Amazon Product API
 
 
-#Initialize a client with your ServiceDomain, AssociateTag, AWSAccessKeyId & AWSSecretKey. Service Domain may be one of the following:
+###Initialize a client with your ServiceDomain, AssociateTag, AWSAccessKeyId & AWSSecretKey. Service Domain may be one of the following:
 
     CA
     CN
@@ -15,11 +15,11 @@
 
     client, err := NewAmazing("DE", "tag", "access", "secret")
 
-#Or from environment variables AMAZING_ASSOCIATE_TAG, AMAZING_ACCESS_KEY, AMAZING_SECRET_KEY:
+###Or from environment variables AMAZING_ASSOCIATE_TAG, AMAZING_ACCESS_KEY, AMAZING_SECRET_KEY:
 
     client, err := NewAmazingFromEnv("DE")
 
-#Currently these operations are supported:
+###Currently these operations are supported:
 
     ItemLookup
     result, err := client.ItemLookup(params)
@@ -31,7 +31,7 @@
     result, err := client.SimilarityLookup(params)
 
 
-#Params are of type url.Values, for ItemLookup you would pass them like this:
+###Params are of type url.Values, for ItemLookup you would pass them like this:
 
     params := url.Values{
       "IdType":        []string{"ASIN"},
@@ -41,7 +41,7 @@
 
     result, err := client.ItemLookup(params)
 
-#Results are defined in response.go, you may also pass in your own structs to the Do(params url.Values, result interface{)) function directly:
+###Results are defined in response.go, you may also pass in your own structs to the Do(params url.Values, result interface{)) function directly:
 
     client, _ := NewAmazingFromEnv("DE")
     var result AmazonItemSearchResponse
