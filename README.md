@@ -41,7 +41,7 @@ Params are of type url.Values, for ItemLookup you would pass them like this:
 
     result, err := client.ItemLookup(params)
 
-Results are defined in response.go, you may also pass in your own structs to the Do(params url.Values, result interface{)) function directly:
+Results are defined in response.go, you may also pass in your own structs to the Request(params url.Values, result interface{)) function directly:
 
     client, _ := NewAmazingFromEnv("DE")
     params := url.Values{
