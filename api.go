@@ -122,6 +122,14 @@ func (a *Amazing) ItemSearch(params url.Values) (*AmazonItemSearchResponse, erro
 
 }
 
+func (a *Amazing) SimilarityLookup(params url.Values) (*AmazonSimilarityLookupResponse, error) {
+
+	var result AmazonSimilarityLookupResponse
+	err := a.Request(params, &result)
+	return &result, err
+
+}
+
 func (a *Amazing) Request(params url.Values, result interface{}) error {
 	httpClient := NewTimeoutClient(time.Duration(3*time.Second), time.Duration(3*time.Second))
 	merged := a.MergeParamsWithDefaults(params)

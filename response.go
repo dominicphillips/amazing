@@ -21,6 +21,12 @@ type AmazonItemSearchResponse struct {
 	AmazonItems      AmazonItems `xml:"Items"`
 }
 
+type AmazonSimilarityLookupResponse struct {
+	XMLName          xml.Name `xml:"SimilarityLookupResponse"`
+	OperationRequest AmazonOperationRequest
+	AmazonItems      AmazonItems `xml:"Items"`
+}
+
 type AmazonOperationRequest struct {
 	HTTPHeaders           []AmazonOperationRequestHeader   `xml:"HTTPHeaders>Header"`
 	Arguments             []AmazonOperationRequestArgument `xml:"Arguments>Argument"`
@@ -44,15 +50,27 @@ type AmazonItems struct {
 }
 
 type AmazonItem struct {
-	ASIN          string
-	ParentASIN    string
-	DetailPageURL string
-	SalesRank     string
-	ItemLinks     []AmazonItemLink `xml:"ItemLinks>ItemLink"`
-	SmallImage    AmazonImage
-	MediumImage   AmazonImage
-	LargeImage    AmazonImage
-	ImageSets     []AmazonImageSet `xml:"ImageSets>ImageSet"`
+	ASIN           string
+	ParentASIN     string
+	DetailPageURL  string
+	SalesRank      string
+	ItemLinks      []AmazonItemLink `xml:"ItemLinks>ItemLink"`
+	SmallImage     AmazonImage
+	MediumImage    AmazonImage
+	LargeImage     AmazonImage
+	ImageSets      []AmazonImageSet `xml:"ImageSets>ImageSet"`
+	ItemAttributes AmazinItemAtributes
+}
+
+type AmazinItemAtributes struct {
+	Title     string
+	ListPrice AmazonItemPrice
+}
+
+type AmazonItemPrice struct {
+	Amount         int64
+	CurrencyCode   string
+	FormattedPrice string
 }
 
 type AmazonItemLink struct {
@@ -85,7 +103,7 @@ type AmazonItemLookupRequest struct {
 }
 
 type AmazonItemLookupErrorResponse struct {
-	XMLName xml.Name `xml:"ItemLookupErrorResponse"`
+	XMLName xml.Name
 	AmazonError
 }
 
