@@ -44,12 +44,18 @@ Params are of type url.Values, for ItemLookup you would pass them like this:
 Results are defined in response.go, you may also pass in your own structs to the Request(params url.Values, result interface{)) function directly:
 
     client, _ := NewAmazingFromEnv("DE")
+
     params := url.Values{
-      "SearchIndex":   []string{"All"},
-      "Operation":     []string{"ItemSearch"},
-      "Keywords":      []string{"Golang"},
+        "SearchIndex": []string{"All"},
+        "Operation":   []string{"ItemSearch"},
+        "Keywords":    []string{"Golang"},
     }
-    var result AmazonItemSearchResponse
+    type CustomResult struct {
+        XMLName          xml.Name `xml:"ItemSearchResponse"`
+        OperationRequest AmazonOperationRequest
+        AmazonItems      AmazonItems `xml:"Items"`
+    }
+    var result CustomResult
     err := client.Request(params, &result)
 
 

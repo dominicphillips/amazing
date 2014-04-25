@@ -151,8 +151,11 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 		return err
 	}
 
+	defer res.Body.Close()
+
 	if res.StatusCode != http.StatusOK {
 		b, err := ioutil.ReadAll(res.Body)
+
 		if err != nil {
 			return err
 		}

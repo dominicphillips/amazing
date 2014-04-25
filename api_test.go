@@ -1,6 +1,7 @@
 package amazing
 
 import (
+	"encoding/xml"
 	"fmt"
 	"net/url"
 	"os"
@@ -146,4 +147,29 @@ func TestItemSimilarityLookup(t *testing.T) {
 		t.Errorf(fmt.Sprintf("%v", result.AmazonItems.Request.Errors))
 		t.Skip()
 	}
+}
+
+func TestCustomResultStruct(t *testing.T) {
+	CheckEnv(t)
+	client, _ := NewAmazingFromEnv("DE")
+
+	params := url.Values{
+		"SearchIndex": []string{"All"},
+		"Operation":   []string{"ItemSearch"},
+		"Keywords":    []string{"Golang"},
+	}
+	type CustomResult struct {
+		XMLName          xml.Name `xml:"ItemSearchResponse"`
+		OperationRequest AmazonOperationRequest
+		AmazonItems      AmazonItems `xml:"Items"`
+	}
+	var result CustomResult
+	err := client.Request(params, &result)
+
+	if err != nil || len(result.AmazonItems.Items) == 0 {
+		t.Errorf("Result.AmazonItems.Items 0 or error", err)
+		t.Errorf(fmt.Sprintf("%v", result.AmazonItems.Request.Errors))
+		t.Skip()
+	}
+
 }
