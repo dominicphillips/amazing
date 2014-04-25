@@ -1,5 +1,8 @@
 ## Go Client for the Amazon Product API
 
+A golang client for the amazon product api. This is very much WIP but it's still quite usable for tasks such as lookup and search. MIT license.
+
+### Configuration
 
 Initialize a client with your ServiceDomain, AssociateTag, AWSAccessKeyId & AWSSecretKey. Service Domain may be one of the following:
 
@@ -41,7 +44,7 @@ Params are of type url.Values, for ItemLookup you would pass them like this:
 
     result, err := client.ItemLookup(params)
 
-Results are defined in response.go, you may also pass in your own structs to the Request(params url.Values, result interface{)) function directly:
+Results are defined in response.go, you may also pass in your own structs to the Request() function directly:
 
     client, _ := NewAmazingFromEnv("DE")
 
