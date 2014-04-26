@@ -1,6 +1,12 @@
 ## Go Client for the Amazon Product API
 
-A golang client for the amazon product api. This is very much WIP but it's still quite usable for tasks such as lookup and search. MIT license.
+A golang client for the amazon product api. This is very much WIP but it's still quite usable for simple tasks such as lookup and search. Handles annoying things such as signature signing and xml -> struct mapping.
+
+MIT license.
+
+### Install
+
+    go get github.com/dominicphillips/amazing
 
 ### Configuration
 
@@ -16,11 +22,17 @@ Initialize a client with your ServiceDomain, AssociateTag, AWSAccessKeyId & AWSS
     UK
     US
 
-    client, err := NewAmazing("DE", "tag", "access", "secret")
+    client, err := amazing.NewAmazing("DE", "tag", "access", "secret")
 
-Or from environment variables AMAZING_ASSOCIATE_TAG, AMAZING_ACCESS_KEY, AMAZING_SECRET_KEY:
+Or from environment variables (recommended)
 
-    client, err := NewAmazingFromEnv("DE")
+    export AMAZING_ASSOCIATE_TAG=
+    export AMAZING_ACCESS_KEY=
+    export AMAZING_SECRET_KEY=
+
+    ----------
+
+    client, err := amazing.NewAmazingFromEnv("DE")
 
 Currently these operations are supported:
 
@@ -46,7 +58,7 @@ Params are of type url.Values, for ItemLookup you would pass them like this:
 
 Results are defined in response.go, you may also pass in your own structs to the Request() function directly:
 
-    client, _ := NewAmazingFromEnv("DE")
+    client, _ := amazing.NewAmazingFromEnv("DE")
 
     params := url.Values{
         "SearchIndex": []string{"All"},
