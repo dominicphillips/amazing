@@ -114,6 +114,17 @@ func (a *Amazing) ItemLookup(params url.Values) (*AmazonItemLookupResponse, erro
 
 }
 
+func (a *Amazing) ItemLookupAsin(asin string) (*AmazonItemLookupResponse, error) {
+
+	return a.ItemLookup(url.Values{
+		"ResponseGroup": []string{"All"},
+		"IdType":        []string{"ASIN"},
+		"ItemId":        []string{asin},
+		"Operation":     []string{"ItemLookup"},
+	})
+
+}
+
 func (a *Amazing) ItemSearch(params url.Values) (*AmazonItemSearchResponse, error) {
 
 	var result AmazonItemSearchResponse
