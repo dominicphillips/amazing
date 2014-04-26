@@ -27,6 +27,36 @@ var serviceDomains = map[string][]string{
 	"US": []string{"ecs.amazonaws.com", "xml-us.amznxslt.com"},
 }
 
+var responseGroups = []string{"Request",
+	"ItemIds",
+	"Small",
+	"Medium",
+	"Large",
+	"Offers",
+	"OfferFull",
+	"OfferSummary",
+	"OfferListings",
+	"PromotionSummary",
+	"Variations",
+	"VariationImages",
+	"VariationSummary",
+	"VariationMatrix",
+	"VariationOffers",
+	"ItemAttributes",
+	"Tracks",
+	"Accessories",
+	"EditorialReview",
+	"SalesRank",
+	"BrowseNodes",
+	"Images",
+	"Similarities",
+	"Reviews",
+	"PromotionalTag",
+	"AlternateVersions",
+	"Collections",
+	"ShippingCharges",
+}
+
 const (
 	resourcePath    = "/onca/xml"
 	resourceService = "AWSECommerceService"
@@ -114,14 +144,22 @@ func (a *Amazing) ItemLookup(params url.Values) (*AmazonItemLookupResponse, erro
 
 }
 
-func (a *Amazing) ItemLookupAsin(asin string) (*AmazonItemLookupResponse, error) {
+func (a *Amazing) ItemLookupAsin(asin string, extra url.Values) (*AmazonItemLookupResponse, error) {
 
-	return a.ItemLookup(url.Values{
+	params := url.Values{
 		"ResponseGroup": []string{"All"},
 		"IdType":        []string{"ASIN"},
 		"ItemId":        []string{asin},
 		"Operation":     []string{"ItemLookup"},
-	})
+	}
+
+	if extra != nil {
+		for k, v := range extra {
+			params[k] = v
+		}
+	}
+
+	return a.ItemLookup(params)
 
 }
 
@@ -185,7 +223,7 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 	}
 
 	err = xml.Unmarshal(b, result)
-	//ioutil.WriteFile("test", b, 0777)
+	//ioutil.WriteFile("test.xml", b, 0777)
 
 	return err
 }

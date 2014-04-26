@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	_ "reflect"
+	"strings"
 	"testing"
 )
 
@@ -48,7 +49,7 @@ func TestItemLookup(t *testing.T) {
 	// check error handling
 	params := url.Values{
 		"Condition":     []string{"New"},
-		"ResponseGroup": []string{"Images,Medium,Offers"},
+		"ResponseGroup": []string{strings.Join(responseGroups, ",")},
 		"IdType":        []string{"ASIN"},
 		"ItemId":        []string{"1234"},
 		"Operation":     []string{"ItemLookup"},
