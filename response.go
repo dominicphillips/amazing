@@ -50,17 +50,23 @@ type AmazonItems struct {
 }
 
 type AmazonItem struct {
-	ASIN           string
-	ParentASIN     string
-	DetailPageURL  string
-	SalesRank      string
-	ItemLinks      []AmazonItemLink `xml:"ItemLinks>ItemLink"`
-	SmallImage     AmazonImage
-	MediumImage    AmazonImage
-	LargeImage     AmazonImage
-	ImageSets      []AmazonImageSet `xml:"ImageSets>ImageSet"`
-	ItemAttributes AmazonItemAtributes
-	OfferSummary   AmazonItemOfferSummary
+	ASIN             string
+	ParentASIN       string
+	DetailPageURL    string
+	SalesRank        string
+	ItemLinks        []AmazonItemLink `xml:"ItemLinks>ItemLink"`
+	SmallImage       AmazonImage
+	MediumImage      AmazonImage
+	LargeImage       AmazonImage
+	ImageSets        []AmazonImageSet `xml:"ImageSets>ImageSet"`
+	ItemAttributes   AmazonItemAtributes
+	OfferSummary     AmazonItemOfferSummary
+	EditorialReviews []AmazonEditorialReview `xml:"EditorialReviews>EditorialReview"`
+}
+
+type AmazonEditorialReview struct {
+	Source  string
+	Content string
 }
 
 type AmazonItemAtributes struct {
