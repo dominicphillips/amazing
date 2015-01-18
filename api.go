@@ -213,6 +213,10 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 		if err != nil {
 			return err
 		}
+		if errorResponse.Code == "RequestThrottled" {
+			time.Sleep(time.Second)
+			return a.Request(params, result)
+		}
 		return &errorResponse
 	}
 
