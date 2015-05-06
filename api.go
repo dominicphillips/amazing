@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"os"
 	"time"
 )
@@ -124,7 +125,7 @@ func (a *Amazing) MergeParamsWithDefaults(extra url.Values) url.Values {
 	}
 
 	// attach signature
-	signThis := fmt.Sprintf("GET\n%s\n%s\n%s", a.Config.ServiceDomain[0], resourcePath, params.Encode())
+	signThis := fmt.Sprintf("GET\n%s\n%s\n%s", a.Config.ServiceDomain[0], resourcePath, strings.Replace(params.Encode(), "+", "%20", -1))
 	h := hmac.New(func() hash.Hash {
 		return sha256.New()
 	}, []byte(a.Config.AWSSecretKey))
@@ -189,7 +190,7 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 		Path:     resourcePath,
 		RawQuery: merged.Encode(),
 	}
-
+	fmt.Println(u.String())
 	r, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return err
