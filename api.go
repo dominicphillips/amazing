@@ -190,7 +190,6 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 		Path:     resourcePath,
 		RawQuery: merged.Encode(),
 	}
-	fmt.Println(u.String())
 	r, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return err
