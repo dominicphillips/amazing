@@ -59,7 +59,7 @@ type AmazonItem struct {
 	MediumImage      AmazonImage
 	LargeImage       AmazonImage
 	ImageSets        []AmazonImageSet `xml:"ImageSets>ImageSet"`
-	ItemAttributes   AmazonItemAtributes
+	ItemAttributes   AmazonItemAttributes
 	OfferSummary     AmazonItemOfferSummary
 	EditorialReviews []AmazonEditorialReview `xml:"EditorialReviews>EditorialReview"`
 }
@@ -69,7 +69,9 @@ type AmazonEditorialReview struct {
 	Content string
 }
 
-type AmazonItemAtributes struct {
+type AmazonItemAtributes AmazonItemAttributes
+
+type AmazonItemAttributes struct {
 	Title     string
 	ListPrice AmazonItemPrice
 }
