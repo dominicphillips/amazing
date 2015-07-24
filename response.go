@@ -71,6 +71,7 @@ type AmazonEditorialReview struct {
 
 type AmazonItemAtributes struct {
 	Title     string
+	Brand     string
 	ListPrice AmazonItemPrice
 }
 
