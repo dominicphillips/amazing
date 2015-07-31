@@ -15,6 +15,7 @@ func CheckEnv(t *testing.T) {
 	tag := os.Getenv(envTag)
 	access := os.Getenv(envAccess)
 	secret := os.Getenv(envSecret)
+
 	if os.Getenv(envTag) == "" || os.Getenv(envAccess) == "" || os.Getenv(envSecret) == "" {
 		t.Errorf("Can't read configuration from environment variables, are they set? "+
 			"%s: %s\n"+
