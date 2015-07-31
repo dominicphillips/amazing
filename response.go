@@ -62,6 +62,12 @@ type AmazonItem struct {
 	ItemAttributes   AmazonItemAttributes
 	OfferSummary     AmazonItemOfferSummary
 	EditorialReviews []AmazonEditorialReview `xml:"EditorialReviews>EditorialReview"`
+	BrowseNodes      []BrowseNode            `xml:"BrowseNodes"`
+}
+type BrowseNode struct {
+	BrowseNodeId string      `xml:"BrowseNodeId"`
+	Name         string      `xml:"Name"`
+	Ancestors    *BrowseNode `xml:"Ancestors"`
 }
 
 type AmazonEditorialReview struct {
