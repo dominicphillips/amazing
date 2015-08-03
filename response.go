@@ -62,12 +62,12 @@ type AmazonItem struct {
 	ItemAttributes   AmazonItemAttributes
 	OfferSummary     AmazonItemOfferSummary
 	EditorialReviews []AmazonEditorialReview `xml:"EditorialReviews>EditorialReview"`
-	BrowseNodes      []BrowseNode            `xml:"BrowseNodes>BrowseNode"`
+	BrowseNodes      []AmazonBrowseNode      `xml:"BrowseNodes>BrowseNode"`
 }
-type BrowseNode struct {
-	BrowseNodeId string      `xml:"BrowseNodeId"`
-	Name         string      `xml:"Name"`
-	Ancestors    *BrowseNode `xml:"Ancestors>BrowseNode"`
+type AmazonBrowseNode struct {
+	BrowseNodeId string              `xml:"BrowseNodeId"`
+	Name         string              `xml:"Name"`
+	Ancestors    *[]AmazonBrowseNode `xml:"Ancestors>BrowseNode"`
 }
 
 type AmazonEditorialReview struct {
