@@ -64,10 +64,11 @@ type AmazonItem struct {
 	EditorialReviews []AmazonEditorialReview `xml:"EditorialReviews>EditorialReview"`
 	BrowseNodes      []AmazonBrowseNode      `xml:"BrowseNodes>BrowseNode"`
 }
+
 type AmazonBrowseNode struct {
-	BrowseNodeId string              `xml:"BrowseNodeId"`
-	Name         string              `xml:"Name"`
-	Ancestors    *[]AmazonBrowseNode `xml:"Ancestors>BrowseNode"`
+	BrowseNodeId string             `xml:"BrowseNodeId"`
+	Name         string             `xml:"Name"`
+	Ancestors    []AmazonBrowseNode `xml:"Ancestors>BrowseNode"`
 }
 
 type AmazonEditorialReview struct {
