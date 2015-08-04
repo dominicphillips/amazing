@@ -11,8 +11,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -117,7 +117,7 @@ func (a *Amazing) MergeParamsWithDefaults(extra url.Values) url.Values {
 		"AWSAccessKeyId": []string{a.Config.AWSAccessKeyId},
 		"AssociateTag":   []string{a.Config.AssociateTag},
 		"Service":        []string{resourceService},
-		"Timestamp":      []string{time.Now().Format(time.RFC3339Nano)},
+		"Timestamp":      []string{time.Now().Format(time.RFC3339)},
 		"Version":        []string{resourceVersion},
 	}
 	for k, v := range extra {
