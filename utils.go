@@ -12,7 +12,7 @@ func TimeoutDialer(cTimeout time.Duration, rwTimeout time.Duration) func(net, ad
 		if err != nil {
 			return nil, err
 		}
-		conn.SetDeadline(time.Now().Add(rwTimeout))
+		conn.SetReadDeadline(time.Now().Add(rwTimeout))
 		return conn, nil
 	}
 }
@@ -20,7 +20,8 @@ func TimeoutDialer(cTimeout time.Duration, rwTimeout time.Duration) func(net, ad
 func NewTimeoutClient(connectTimeout time.Duration, readWriteTimeout time.Duration) *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{
-			Dial: TimeoutDialer(connectTimeout, readWriteTimeout),
+			Proxy: http.ProxyFromEnvironment,
+			Dial:  TimeoutDialer(connectTimeout, readWriteTimeout),
 		},
 	}
 }
