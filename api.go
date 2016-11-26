@@ -195,12 +195,19 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 		return err
 	}
 
+	time_start := time.Now()
+
 	res, err := httpClient.Do(r)
 	if err != nil {
 		return err
 	}
 
 	defer res.Body.Close()
+
+	respTime := time.Since(time_start)
+	if respTime <= time.Second {
+		time.Sleep(time.Second - respTime)
+	}
 
 	if res.StatusCode != http.StatusOK {
 		b, err := ioutil.ReadAll(res.Body)
