@@ -205,7 +205,7 @@ func (a *Amazing) Request(params url.Values, result interface{}) error {
 	defer res.Body.Close()
 
 	respTime := time.Since(time_start)
-	if respTime <= time.Second {
+	if respTime < time.Second {
 		time.Sleep(time.Second - respTime)
 	}
 
