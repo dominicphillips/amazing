@@ -74,4 +74,4 @@ Results are defined in response.go, you may also pass in your own structs to the
 
 For a quick reference over the various parameters, response groups etc. check [the quick reference card](http://s3.amazonaws.com/awsdocs/Associates/2011-08-01/prod-adv-api-qrc-2011-08-01.pdf).
 
-Sponsored by [Make Better Hiring Decisions With Take-Home Coding Challenges](https://codesubmit.io)
+Sponsored by [codesubmit.io](https://codesubmit.io) and [cactushire.com](https://cactushire.com)
